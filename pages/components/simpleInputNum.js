@@ -6,7 +6,7 @@ const SimpleInputNum = (props) => {
       <div className="gap-2 flex flex-col">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="flex items-center">
-            <label className="text-r8-base font-mono" for="max_frames">
+            <label className="text-r8-base font-mono" htmlFor="max_frames">
               <div className="flex items-center gap-1.5" translate="no">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -41,8 +41,8 @@ const SimpleInputNum = (props) => {
               step={props.step}
               type="number"
               name="max_frames"
-              value="25"
-              data-listener-added_2c71d4de="true"
+              value={props.value}
+              onChange={props.onChange}
             />
           </div>
         </div>

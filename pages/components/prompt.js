@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 const Prompt = (props) => {
-  const [value, setValue] = useState("A blonde girl in jeans");
-
   const textPrompt = useMemo(() => {
-    const height = value.toString().split(/\r*\n/).length * 42;
+    const height = props.value.toString().split(/\r*\n/).length * 42;
     const style = height.toString() + "px !important";
     return (
       <textarea
@@ -16,11 +14,11 @@ const Prompt = (props) => {
         style={{
           height: style,
         }}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={props.value}
+        onChange={props.onChange}
       />
     );
-  }, [value]);
+  }, [props.onChange, props.value]);
 
   return (
     <div className="py-2.5">

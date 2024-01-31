@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import InputSlider from "../components/inputSlider";
 import Prompt from "../components/prompt";
@@ -8,6 +8,12 @@ const VideoGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
   const [preview, setPreview] = React.useState("");
+
+  const [prompt, setPrompt] = useState("A blonde girl in jeans");
+  const [maxFrames, setMaxFrames] = useState(16);
+  const [numInfeSteps, setNumInfeSteps] = useState(50);
+  const [guidanceScale, setGuidanceScale] = useState(9);
+  const [seed, setSeed] = useState(0);
 
   const handleEnter = (e) => {
     e.preventDefault();
@@ -66,7 +72,7 @@ const VideoGenerator = () => {
               <div className="flex flex-col gap-2 group" data-disabled="true">
                 <div className="flex items-center">
                   <div className="flex items-center">
-                    <label className="text-r8-base font-mono" for="image">
+                    <label className="text-r8-base font-mono" htmlFor="image">
                       <div className="flex items-center gap-1.5" translate="no">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +106,7 @@ const VideoGenerator = () => {
                   >
                     <input
                       type="file"
-                      tabindex="-1"
+                      tabIndex="-1"
                       accept="image/*"
                       id="image"
                       style={{ display: "none" }}
@@ -157,13 +163,18 @@ const VideoGenerator = () => {
                 <p className="text-r8-sm">This field is required</p>
               </div>
             </div>
-            <Prompt />
+            <Prompt
+              onChange={(e) => setPrompt(e.target.value)}
+              value={prompt}
+            />
             <SimpleInputNum
               label="max_frames"
               step={1}
               dataType="integer"
               description="Number of frames in the output"
               defaultValue="16"
+              value={maxFrames}
+              onChange={(e) => setMaxFrames(e.target.value)}
               min={2}
             />
             <InputSlider
@@ -174,6 +185,10 @@ const VideoGenerator = () => {
               step={1}
               defaultValue={50}
               dataType="integer"
+              value={numInfeSteps}
+              onChange={(e) => {
+                setNumInfeSteps(e.target.value);
+              }}
             />
             <InputSlider
               label="guidance_scale"
@@ -183,12 +198,18 @@ const VideoGenerator = () => {
               step={0.01}
               defaultValue={9}
               dataType="number"
+              value={guidanceScale}
+              onChange={(e) => {
+                setGuidanceScale(e.target.value);
+              }}
             />
             <SimpleInputNum
               label="seed"
               step={1}
               dataType="integer"
               description="Random seed. Leave blank to randomize the seed"
+              value={seed}
+              onChange={(e) => setSeed(e.target.value)}
             />
             <div className="sticky bottom-0">
               <div className="flex items-center justify-end gap-2 py-4 border-t bg-black border-r8-gray-6">
@@ -232,7 +253,7 @@ const VideoGenerator = () => {
                 <video
                   src="https://replicate.delivery/pbxt/8FpYFhLD6XKYIpivyRjI3LHHhV4C1kAVsGZSP4f2f4Uk6NJSA/out.mp4"
                   preload="auto"
-                  autoplay
+                  autoPlay
                   controls
                   loop
                   style={{ width: "auto", height: "auto" }}
