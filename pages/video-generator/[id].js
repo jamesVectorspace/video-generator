@@ -10,12 +10,14 @@ import StableDiffusion from "../components/formContent/stablediffusion";
 import DiffusionAnimation from "../components/formContent/diffusionAnimation";
 import InfiniteZoom from "../components/formContent/infiniteZoom";
 import { v4 as uuidv4 } from "uuid";
+import slugify from "slugify";
 
 const VideoGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
   const [error, setError] = useState(null);
   const [prediction, setPrediction] = useState();
+  const [loading, setLoading] = useState(false);
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -61,6 +63,7 @@ const VideoGenerator = () => {
   }
 
   const generateVideo = (prompt) => {
+    setLoading(true);
     setError(null);
 
     const model = AiModels[id - 1];
@@ -75,8 +78,12 @@ const VideoGenerator = () => {
       .then((result) => {
         console.log("result updated!", result);
         setPrediction(result);
+        setLoading(false);
       })
-      .catch((error) => setError(error.message));
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
   };
 
   // with image
@@ -108,8 +115,8 @@ const VideoGenerator = () => {
       model,
       submissionId
     );
-    let prediction = await response.json();
 
+    let prediction = await response.json();
     if (response.status !== 201) {
       throw new Error(prediction.detail);
     }
@@ -121,7 +128,6 @@ const VideoGenerator = () => {
       await sleep(500);
       const response = await fetch("/api/predictions/" + prediction.id);
       prediction = await response.json();
-      console.log(prediction);
       if (response.status !== 200) {
         throw new Error(prediction.detail);
       }
@@ -134,13 +140,11 @@ const VideoGenerator = () => {
   }
 
   const generateVideoWithImage = async (prompt, newImageURL) => {
-    const submissionId = `${slugify(prompt, { lower: true })}-${(
-      Math.random() + 1
-    )
-      .toString(36)
-      .substring(5)}`;
+    setLoading(true);
+    const submissionId = uuidv4();
+    const model = AiModels[id - 1];
 
-    let promise = createReplicatePrediction(
+    let promise = createReplicatePredictionWithImage(
       prompt,
       newImageURL,
       model,
@@ -154,8 +158,12 @@ const VideoGenerator = () => {
     promise
       .then((result) => {
         setPrediction(result);
+        setLoading(false);
       })
-      .catch((error) => setError(error.message));
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
   };
 
   const formContent = useMemo(() => {
@@ -183,7 +191,13 @@ const VideoGenerator = () => {
         );
         break;
       case 4:
-        res = <Videocrafter model={AiModels[id - 1]} />;
+        res = (
+          <Videocrafter
+            model={AiModels[id - 1]}
+            generateVideo={generateVideoWithImage}
+            prediction={prediction}
+          />
+        );
         break;
       case 5:
         res = <Lavie model={AiModels[id - 1]} />;
@@ -202,7 +216,7 @@ const VideoGenerator = () => {
         break;
     }
     return res;
-  }, [id]);
+  }, [id, prediction]);
 
   return <div className="mt-2 py-5 px-20">{formContent}</div>;
 };

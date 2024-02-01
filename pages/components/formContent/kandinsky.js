@@ -4,7 +4,6 @@ import InputSlider from "../inputSlider";
 import Prompt from "../prompt";
 import SimpleInputNum from "../simpleInputNum";
 import SelectType from "../selectType";
-import { HandThumbUpIcon } from "@heroicons/react/20/solid";
 import SaveImage from "../save-image";
 import Counter from "../counter";
 
@@ -242,12 +241,12 @@ export default function KandinSky({ model, generateVideo, prediction }) {
                             </video>
                           </button>
                         </div>
-                        <SaveImage
+                        {/* <SaveImage
                           open={open}
                           setOpen={setOpen}
                           prediction={prediction}
                           url={prediction.output}
-                        />
+                        /> */}
                       </>
                     )}
 

@@ -4,6 +4,9 @@ import InputSlider from "../inputSlider";
 import Prompt from "../prompt";
 import SimpleInputNum from "../simpleInputNum";
 import { supabaseClient, supabaseClientUrl } from "@/lib/supabase";
+import { v4 as uuidv4 } from "uuid";
+import SaveImage from "../save-image";
+import Counter from "../counter";
 
 export default function Iv2gen({ model, generateVideo, prediction }) {
   const [imageFile, setImageFile] = useState(null);
@@ -41,50 +44,54 @@ export default function Iv2gen({ model, generateVideo, prediction }) {
     if (typeof imageURL != "string") {
       return false;
     } else {
-      return imageURL.startsWith(supabaseUrl);
+      return imageURL.startsWith(supabaseClientUrl);
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let newImageURL;
+    if (imageFile) {
+      if (!isImageOnSupabase(imageURL)) {
+        const imageName = `${uuidv4()}-${imageFile.name}`;
 
-    if (!isImageOnSupabase(imageURL)) {
-      const imageName = `${uuidv4()}-${imageFile.name}`;
+        // upload controlnet image
+        const { data, error } = await supabaseClient.storage
+          .from("images")
+          .upload(`public/${imageName}`, imageFile);
 
-      // upload controlnet image
-      const { data, error } = await supabaseClient.storage
-        .from("images")
-        .upload(`public/${imageName}`, imageFile);
+        if (data) {
+          console.log(
+            `successfully uploaded ${JSON.stringify(data)}, ${imageFile.name}`
+          );
+        } else {
+          console.log(
+            `failed uploaded ${JSON.stringify(error)}, ${imageFile.name}`
+          );
+          window.alert("Failed to upload image");
+          return;
+        }
 
-      if (data) {
-        console.log(
-          `successfully uploaded ${JSON.stringify(data)}, ${imageFile.name}`
-        );
+        newImageURL = `${supabaseClientUrl}/storage/v1/object/public/images/public/${imageName}`;
+        setImageURL(newImageURL);
       } else {
-        console.log(
-          `failed uploaded ${JSON.stringify(error)}, ${imageFile.name}`
-        );
-        window.alert("Failed to upload image");
-        return;
+        newImageURL = imageURL;
       }
 
-      newImageURL = `${supabaseClientUrl}/storage/v1/object/public/images/public/${imageName}`;
-      setImageURL(newImageURL);
-    } else {
-      newImageURL = imageURL;
+      // const parameters = {
+      //   prompt,
+      //   max_frames: maxFrames,
+      //   guidance_scale: guidanceScale,
+      //   num_inference_steps: numInfeSteps,
+      // };
+      // console.log(`great, setting url to ${newImageURL}`);
+      // console.log(`parameters`, parameters);
+
+      generateVideo(prompt, newImageURL);
     }
-
-    const parameters = {
-      prompt,
-      max_frames: maxFrames,
-      guidance_scale: guidanceScale,
-      num_inference_steps: numInfeSteps,
-    };
-    console.log(`great, setting url to ${newImageURL}`);
-    console.log(`parameters ${parameters}`);
-
-    generateVideo(parameters, newImageURL);
   };
+
+  console.log("imageURL", imageURL);
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -271,14 +278,60 @@ export default function Iv2gen({ model, generateVideo, prediction }) {
           </div>
           <div className="space-y-4">
             <div className="w-full" style={{ width: "auto", height: "auto" }}>
-              <video
-                src={model.url}
-                preload="auto"
-                autoPlay
-                controls
-                loop
-                style={{ width: "auto", height: "auto" }}
-              ></video>
+              <>
+                {prediction && (
+                  <>
+                    {prediction.status == "succeeded" && (
+                      <>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpen(true)}
+                            className="image-wrapper rounded-lg hover:opacity-75"
+                          >
+                            <video
+                              className={`rounded-xl aspect-square w-auto h-auto`}
+                              controls
+                            >
+                              <source
+                                src={prediction.output}
+                                type="video/mp4"
+                              ></source>
+                            </video>
+                          </button>
+                        </div>
+                        {/* <SaveImage
+                          open={open}
+                          setOpen={setOpen}
+                          prediction={prediction}
+                          url={prediction.output}
+                        /> */}
+                      </>
+                    )}
+
+                    {!prediction.output && prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <span className="mx-12">{prediction.error}</span>
+                      </div>
+                    )}
+
+                    {!prediction.output && !prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <Counter />
+                      </div>
+                    )}
+                  </>
+                )}
+                {!prediction && (
+                  <video
+                    src={model.url}
+                    preload="auto"
+                    autoPlay
+                    controls
+                    loop
+                    style={{ width: "auto", height: "auto" }}
+                  />
+                )}
+              </>
             </div>
           </div>
         </div>
