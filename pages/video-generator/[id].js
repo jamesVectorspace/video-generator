@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import AiModels from "@/lib/models";
 import KandinSky from "../components/formContent/kandinsky";
@@ -133,7 +133,7 @@ const VideoGenerator = () => {
     return prediction;
   }
 
-  const generateVideoWithImage = async (prompt, image) => {
+  const generateVideoWithImage = async (prompt, newImageURL) => {
     const submissionId = `${slugify(prompt, { lower: true })}-${(
       Math.random() + 1
     )
