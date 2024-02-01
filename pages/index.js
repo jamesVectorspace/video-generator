@@ -1,5 +1,5 @@
 import AiModels from "@/lib/models";
-import AiModelFC from "./components/aiModel";
+import AiModelFC from "../components/aiModel";
 
 export default function Home() {
   return (

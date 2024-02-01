@@ -1,16 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import AiModels from "@/lib/models";
-import KandinSky from "../components/formContent/kandinsky";
-import Tokenflow from "../components/formContent/tokenflow";
-import Iv2gen from "../components/formContent/i2vgen";
-import Videocrafter from "../components/formContent/videocrafter";
-import Lavie from "../components/formContent/lavie";
-import StableDiffusion from "../components/formContent/stablediffusion";
-import DiffusionAnimation from "../components/formContent/diffusionAnimation";
-import InfiniteZoom from "../components/formContent/infiniteZoom";
+import KandinSky from "../../components/formContent/kandinsky";
+import Tokenflow from "../../components/formContent/tokenflow";
+import Iv2gen from "../../components/formContent/i2vgen";
+import Videocrafter from "../../components/formContent/videocrafter";
+import Lavie from "../../components/formContent/lavie";
+import StableDiffusion from "../../components/formContent/stablediffusion";
+import DiffusionAnimation from "../../components/formContent/diffusionAnimation";
+import InfiniteZoom from "../../components/formContent/infiniteZoom";
 import { v4 as uuidv4 } from "uuid";
-import slugify from "slugify";
 
 const VideoGenerator = () => {
   const router = useRouter();
