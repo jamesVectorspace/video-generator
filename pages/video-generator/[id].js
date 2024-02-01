@@ -9,22 +9,178 @@ import Lavie from "../components/formContent/lavie";
 import StableDiffusion from "../components/formContent/stablediffusion";
 import DiffusionAnimation from "../components/formContent/diffusionAnimation";
 import InfiniteZoom from "../components/formContent/infiniteZoom";
+import { v4 as uuidv4 } from "uuid";
 
 const VideoGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [error, setError] = useState(null);
+  const [prediction, setPrediction] = useState();
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // no image
+  async function postPrediction(prompt, model, submissionId) {
+    return fetch("/api/predictions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        version: model.version,
+        source: model.source,
+        model: model.name,
+        submission_id: submissionId,
+      }),
+    });
+  }
+
+  async function createReplicatePrediction(prompt, model, submissionId) {
+    const response = await postPrediction(prompt, model, submissionId);
+    let prediction = await response.json();
+
+    if (response.status !== 201) {
+      throw new Error(prediction.detail);
+    }
+    while (
+      prediction.status !== "succeeded" &&
+      prediction.status !== "failed"
+    ) {
+      await sleep(500);
+      const response = await fetch("/api/predictions/" + prediction.id);
+      prediction = await response.json();
+      if (response.status !== 200) {
+        throw new Error(prediction.detail);
+      }
+    }
+
+    prediction.model = model.name;
+    prediction.source = model.source;
+    return prediction;
+  }
+
+  const generateVideo = (prompt) => {
+    setError(null);
+
+    const model = AiModels[id - 1];
+    const submissionId = uuidv4();
+    let promise = createReplicatePrediction(prompt, model, submissionId);
+    promise.model = model.name;
+    promise.source = model.source;
+    promise.version = model.version;
+    setPrediction(promise);
+
+    promise
+      .then((result) => {
+        console.log("result updated!", result);
+        setPrediction(result);
+      })
+      .catch((error) => setError(error.message));
+  };
+
+  // with image
+  async function postPredictionWithImage(prompt, image, model, submissionId) {
+    return fetch("/api/predictions/controlnet", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        image: image,
+        version: model.version,
+        source: model.source,
+        model: model.name,
+        submission_id: submissionId,
+      }),
+    });
+  }
+  async function createReplicatePredictionWithImage(
+    prompt,
+    image,
+    model,
+    submissionId
+  ) {
+    const response = await postPredictionWithImage(
+      prompt,
+      image,
+      model,
+      submissionId
+    );
+    let prediction = await response.json();
+
+    if (response.status !== 201) {
+      throw new Error(prediction.detail);
+    }
+
+    while (
+      prediction.status !== "succeeded" &&
+      prediction.status !== "failed"
+    ) {
+      await sleep(500);
+      const response = await fetch("/api/predictions/" + prediction.id);
+      prediction = await response.json();
+      console.log(prediction);
+      if (response.status !== 200) {
+        throw new Error(prediction.detail);
+      }
+    }
+
+    prediction.model = model.name;
+    prediction.source = model.source;
+
+    return prediction;
+  }
+
+  const generateVideoWithImage = async (prompt, image) => {
+    const submissionId = `${slugify(prompt, { lower: true })}-${(
+      Math.random() + 1
+    )
+      .toString(36)
+      .substring(5)}`;
+
+    let promise = createReplicatePrediction(
+      prompt,
+      newImageURL,
+      model,
+      submissionId
+    );
+    promise.model = model.name;
+    promise.source = model.source;
+    promise.version = model.version;
+    setPrediction(promise);
+
+    promise
+      .then((result) => {
+        setPrediction(result);
+      })
+      .catch((error) => setError(error.message));
+  };
 
   const formContent = useMemo(() => {
     let res = <></>;
     switch (Number(id)) {
       case 1:
-        res = <KandinSky model={AiModels[id - 1]} />;
+        res = (
+          <KandinSky
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
         break;
       case 2:
         res = <Tokenflow model={AiModels[id - 1]} />;
         break;
       case 3:
-        res = <Iv2gen model={AiModels[id - 1]} />;
+        res = (
+          <Iv2gen
+            model={AiModels[id - 1]}
+            generateVideo={generateVideoWithImage}
+            prediction={prediction}
+          />
+        );
         break;
       case 4:
         res = <Videocrafter model={AiModels[id - 1]} />;
