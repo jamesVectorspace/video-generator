@@ -37,7 +37,7 @@ const SimpleInputNum = (props) => {
               id="max_frames"
               className="border p-2 text-gray-900 border-black w-full flex-shrink-0 disabled:cursor-not-allowed disabled:opacity-50 max-w-full min-w-[5rem]"
               dir="auto"
-              min="2"
+              min="0"
               step={props.step}
               type="number"
               name="max_frames"
