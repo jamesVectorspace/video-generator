@@ -1,24 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 const Prompt = (props) => {
-  const textPrompt = useMemo(() => {
-    const height = props.value.toString().split(/\r*\n/).length * 42;
-    const style = height.toString() + "px !important";
-    return (
-      <textarea
-        id="prompt"
-        dir="auto"
-        required={true}
-        className="border p-2 border-black w-full text-gray-900 resize-none disabled:cursor-not-allowed disabled:opacity-50"
-        name="prompt"
-        style={{
-          height: style,
-        }}
-        value={props.value}
-        onChange={props.onChange}
-      />
-    );
-  }, [props.onChange, props.value]);
+  const { value } = props;
+  const height = useMemo(() => {
+    return value.toString().split(/\r*\n/).length * 42;
+  }, [value]);
 
   return (
     <div className="py-2.5">
@@ -58,7 +44,16 @@ const Prompt = (props) => {
             to add a new line
           </span>
         </div>
-        {textPrompt}
+        <textarea
+          id="prompt"
+          dir="auto"
+          required={true}
+          className={`border p-2 border-black w-full text-gray-900 resize-none disabled:cursor-not-allowed disabled:opacity-50`}
+          name="prompt"
+          value={value}
+          style={{ height: `${height}px !important` }}
+          onChange={props.onChange}
+        />
       </div>
       <div className="mt-2 space-y-1">
         <p className="text-gray-500 dark:text-gray-400">

@@ -8,7 +8,6 @@ const VideoGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
   const [preview, setPreview] = React.useState("");
-
   const [prompt, setPrompt] = useState("A blonde girl in jeans");
   const [maxFrames, setMaxFrames] = useState(16);
   const [numInfeSteps, setNumInfeSteps] = useState(50);
@@ -23,7 +22,6 @@ const VideoGenerator = () => {
   const handleOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("over!");
   };
 
   useEffect(() => {}, [id]);
@@ -39,9 +37,7 @@ const VideoGenerator = () => {
     const reader = new FileReader();
     reader.readAsBinaryString(file);
     reader.onload = () => {
-      // this is the base64 data
       const fileRes = btoa(reader.result);
-      console.log(`data:image/jpg;base64,${fileRes}`);
       setPreview(`data:image/jpg;base64,${fileRes}`);
     };
 
@@ -55,8 +51,13 @@ const VideoGenerator = () => {
     e.stopPropagation();
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(preview, prompt, maxFrames, numInfeSteps, guidanceScale, seed);
+  };
+
   return (
-    <div className="mt-2 p-5">
+    <div className="mt-2 py-5 px-20">
       <div className="flex flex-col md:flex-row">
         <div className="input-col relative md:flex-1 pb-4 min-w-0">
           <div className="mb-2 flex items-center justify-between">
@@ -64,7 +65,7 @@ const VideoGenerator = () => {
               <h2 className="!my-0 text-r8-2xl">Input</h2>
             </div>
           </div>
-          <form id="input-form">
+          <form onSubmit={(e) => handleSubmit(e)}>
             {preview && (
               <img src={preview} alt="image" className="max-w-full" />
             )}
@@ -214,20 +215,14 @@ const VideoGenerator = () => {
             <div className="sticky bottom-0">
               <div className="flex items-center justify-end gap-2 py-4 border-t bg-black border-r8-gray-6">
                 <button
-                  aria-disabled="true"
                   type="button"
-                  disabled=""
                   className="px-4 py-2 border dark:border-white dark:text-white"
-                  style={{ pointerEvents: "none" }}
                 >
                   <span>Reset</span>
                 </button>
                 <button
-                  aria-disabled="true"
                   type="submit"
-                  form="input-form"
                   className="px-4 py-2 border bg-white text-gray-900"
-                  style={{ pointerEvents: "none" }}
                 >
                   <span>Run</span>
                 </button>
