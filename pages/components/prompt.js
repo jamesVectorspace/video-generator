@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 const Prompt = (props) => {
-  const { value } = props;
   const height = useMemo(() => {
-    return value.toString().split(/\r*\n/).length * 42;
-  }, [value]);
+    return props.value.toString().split(/\r*\n/).length * 42;
+  }, [props.value]);
 
   return (
     <div className="py-2.5">
@@ -50,15 +49,13 @@ const Prompt = (props) => {
           required={true}
           className={`border p-2 border-black w-full text-gray-900 resize-none disabled:cursor-not-allowed disabled:opacity-50`}
           name="prompt"
-          value={value}
+          value={props.value}
           style={{ height: `${height}px !important` }}
           onChange={props.onChange}
         />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="text-gray-500 dark:text-gray-400">
-          Describe the input image.
-        </p>
+        <p className="text-gray-500 dark:text-gray-400">{props.description}</p>
       </div>
     </div>
   );
