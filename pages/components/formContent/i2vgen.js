@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import InputSlider from "../inputSlider";
 import Prompt from "../prompt";
 import SimpleInputNum from "../simpleInputNum";
+import { supabaseClient, supabaseClientUrl } from "@/lib/supabase";
 
-export default function Iv2gen({ model }) {
-  const [preview, setPreview] = React.useState("");
+export default function Iv2gen({ model, generateVideo, prediction }) {
+  const [imageFile, setImageFile] = useState(null);
+  const [imageURL, setImageURL] = useState("");
   const [prompt, setPrompt] = useState("A blonde girl in jeans");
   const [maxFrames, setMaxFrames] = useState(16);
   const [numInfeSteps, setNumInfeSteps] = useState(50);
@@ -22,24 +24,12 @@ export default function Iv2gen({ model }) {
     e.stopPropagation();
   };
 
-  function uploadFile(file) {
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
-    reader.onload = () => {
-      const fileRes = btoa(reader.result);
-      setPreview(`data:image/jpg;base64,${fileRes}`);
-    };
-
-    reader.onerror = () => {
-      console.log("There is a problem while uploading...");
-    };
-  }
-
   const handleUpload = (e) => {
     e.preventDefault();
     e.stopPropagation();
     const [file] = e.target.files || e.dataTransfer.files;
-    uploadFile(file);
+    setImageFile(file);
+    setImageURL(URL.createObjectURL(file));
   };
 
   const handleLeave = (e) => {
@@ -47,9 +37,53 @@ export default function Iv2gen({ model }) {
     e.stopPropagation();
   };
 
-  const handleSubmit = (e) => {
+  function isImageOnSupabase(imageURL) {
+    if (typeof imageURL != "string") {
+      return false;
+    } else {
+      return imageURL.startsWith(supabaseUrl);
+    }
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(preview, prompt, maxFrames, numInfeSteps, guidanceScale, seed);
+
+    if (!isImageOnSupabase(imageURL)) {
+      const imageName = `${uuidv4()}-${imageFile.name}`;
+
+      // upload controlnet image
+      const { data, error } = await supabaseClient.storage
+        .from("images")
+        .upload(`public/${imageName}`, imageFile);
+
+      if (data) {
+        console.log(
+          `successfully uploaded ${JSON.stringify(data)}, ${imageFile.name}`
+        );
+      } else {
+        console.log(
+          `failed uploaded ${JSON.stringify(error)}, ${imageFile.name}`
+        );
+        window.alert("Failed to upload image");
+        return;
+      }
+
+      newImageURL = `${supabaseClientUrl}/storage/v1/object/public/images/public/${imageName}`;
+      setImageURL(newImageURL);
+    } else {
+      newImageURL = imageURL;
+    }
+
+    const parameters = {
+      prompt,
+      max_frames: maxFrames,
+      guidance_scale: guidanceScale,
+      num_inference_steps: numInfeSteps,
+    };
+    console.log(`great, setting url to ${newImageURL}`);
+    console.log(`parameters ${parameters}`);
+
+    generateVideo(parameters, newImageURL);
   };
 
   return (
@@ -61,7 +95,9 @@ export default function Iv2gen({ model }) {
           </div>
         </div>
         <form onSubmit={(e) => handleSubmit(e)}>
-          {preview && <img src={preview} alt="image" className="max-w-full" />}
+          {imageURL && (
+            <img src={imageURL} alt="image" className="max-w-full" />
+          )}
           <div className="py-2.5" data-type="string" data-name="image">
             <div className="flex flex-col gap-2 group" data-disabled="true">
               <div className="flex items-center">

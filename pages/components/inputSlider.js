@@ -36,8 +36,8 @@ const InputSlider = (props) => {
           id="num_inference_steps"
           className="border p-2 text-gray-900 border-black w-full flex-shrink-0 disabled:cursor-not-allowed disabled:opacity-50 max-w-[5.5rem]"
           dir="auto"
-          max="500"
-          min="1"
+          max={props.max}
+          min={props.min}
           step="1"
           type="number"
           name="num_inference_steps"
