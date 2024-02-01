@@ -13,7 +13,13 @@ export default function Videocrafter({ model, generateVideo, prediction }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    generateVideo(prompt);
+    const parameters = {
+      prompt,
+      save_fps: saveFps,
+      ddim_steps: ddimSteps,
+      unconditional_guidance_scale: guidanceScale,
+    };
+    generateVideo(parameters);
   };
 
   return (

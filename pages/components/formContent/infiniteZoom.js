@@ -2,15 +2,25 @@ import React, { useState } from "react";
 import Prompt from "../prompt";
 import Combobox from "../combobox";
 import SimpleInputNum from "../simpleInputNum";
+import Counter from "../counter";
 
-export default function InfiniteZoom({ model }) {
-  const [prompt, setPrompt] = useState("A path going into the woods");
-  const [output_format, setOutputFormat] = useState("mp4");
-  const [inpaint_inter, setInpaintInter] = useState(2);
+export default function InfiniteZoom({ model, generateVideo, prediction }) {
+  const { default_params } = model;
+
+  const [prompt, setPrompt] = useState(default_params.prompt);
+  const [outputFormat, setOutputFormat] = useState(
+    default_params.output_format
+  );
+  const [inpaintInter, setInpaintInter] = useState(default_params.inpaint_iter);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(prompt);
+    const parameters = {
+      prompt,
+      inpaint_iter: inpaintInter,
+      output_format: outputFormat,
+    };
+    generateVideo(parameters);
   };
 
   return (
@@ -27,7 +37,7 @@ export default function InfiniteZoom({ model }) {
             label="output_format"
             description="infinite loop gif or mp4 video"
             defaultValue="mp4"
-            selected={output_format}
+            selected={outputFormat}
             dataType="string"
             arrayValue={["mp4", "gif"]}
             onChange={(e) => setOutputFormat(e.target.selected)}
@@ -38,7 +48,7 @@ export default function InfiniteZoom({ model }) {
             dataType="integer"
             description="Number of iterations of pasting the image in it's center and inpainting the boarders"
             defaultValue="2"
-            value={inpaint_inter}
+            value={inpaintInter}
             onChange={(e) => setInpaintInter(e.target.value)}
           />
           <div className="sticky bottom-0">
@@ -74,14 +84,60 @@ export default function InfiniteZoom({ model }) {
           </div>
           <div className="space-y-4">
             <div className="w-full" style={{ width: "auto", height: "auto" }}>
-              <video
-                src={model.url}
-                preload="auto"
-                autoPlay
-                controls
-                loop
-                style={{ width: "auto", height: "auto" }}
-              ></video>
+              <>
+                {prediction && (
+                  <>
+                    {prediction.status == "succeeded" && (
+                      <>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpen(true)}
+                            className="image-wrapper rounded-lg hover:opacity-75"
+                          >
+                            <video
+                              className={`rounded-xl aspect-square w-auto h-auto`}
+                              controls
+                            >
+                              <source
+                                src={prediction.output[`${outputFormat}`]}
+                                type="video/mp4"
+                              ></source>
+                            </video>
+                          </button>
+                        </div>
+                        {/* <SaveImage
+                          open={open}
+                          setOpen={setOpen}
+                          prediction={prediction}
+                          url={prediction.output}
+                        /> */}
+                      </>
+                    )}
+
+                    {!prediction.output && prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <span className="mx-12">{prediction.error}</span>
+                      </div>
+                    )}
+
+                    {!prediction.output && !prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <Counter />
+                      </div>
+                    )}
+                  </>
+                )}
+                {!prediction && (
+                  <video
+                    src={model.url}
+                    preload="auto"
+                    autoPlay
+                    controls
+                    loop
+                    style={{ width: "auto", height: "auto" }}
+                  />
+                )}
+              </>
             </div>
           </div>
         </div>

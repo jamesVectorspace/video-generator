@@ -22,14 +22,14 @@ const VideoGenerator = () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   // no image
-  async function postPrediction(prompt, model, submissionId) {
+  async function postPrediction(parameters, model, submissionId) {
     return fetch("/api/predictions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: prompt,
+        parameters,
         version: model.version,
         source: model.source,
         model: model.name,
@@ -179,7 +179,13 @@ const VideoGenerator = () => {
         );
         break;
       case 2:
-        res = <Tokenflow model={AiModels[id - 1]} />;
+        res = (
+          <Tokenflow
+            model={AiModels[id - 1]}
+            generateVideo={generateVideoWithImage}
+            prediction={prediction}
+          />
+        );
         break;
       case 3:
         res = (
@@ -194,13 +200,19 @@ const VideoGenerator = () => {
         res = (
           <Videocrafter
             model={AiModels[id - 1]}
-            generateVideo={generateVideoWithImage}
+            generateVideo={generateVideo}
             prediction={prediction}
           />
         );
         break;
       case 5:
-        res = <Lavie model={AiModels[id - 1]} />;
+        res = (
+          <Lavie
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
         break;
       case 6:
         res = <StableDiffusion model={AiModels[id - 1]} />;
@@ -209,7 +221,13 @@ const VideoGenerator = () => {
         res = <DiffusionAnimation model={AiModels[id - 1]} />;
         break;
       case 8:
-        res = <InfiniteZoom model={AiModels[id - 1]} />;
+        res = (
+          <InfiniteZoom
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
         break;
       default:
         res = <></>;

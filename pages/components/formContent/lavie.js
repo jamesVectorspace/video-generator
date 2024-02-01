@@ -5,25 +5,45 @@ import Prompt from "../prompt";
 import SimpleInputNum from "../simpleInputNum";
 import Combobox from "../combobox";
 import CheckBox from "../checkbox";
+import Counter from "../counter";
 
-export default function Lavie({ model }) {
-  const [prompt, setPrompt] = useState(
-    "a Corgi walking in the park at sunrise, oil painting style"
+export default function Lavie({ model, generateVideo, prediction }) {
+  const { default_params } = model;
+  const [prompt, setPrompt] = useState(default_params.prompt);
+  const [width, setWidth] = useState(default_params.width);
+  const [height, setHeight] = useState(default_params.height);
+  const [numInfeSteps, setNumInfeSteps] = useState(
+    default_params.num_inference_steps
   );
-  const [width, setWidth] = useState(512);
-  const [height, setHeight] = useState(320);
-  const [numInfeSteps, setNumInfeSteps] = useState(50);
-  const [guidanceScale, setGuidanceScale] = useState(7);
-  const [quality, setQuality] = useState(9);
-  const [seed, setSeed] = useState(0);
-  const [interpolation, setInterpolation] = useState(false);
-  const [resolution, setResolution] = useState(false);
-  const [fps, setFps] = useState(8);
-  const [sample_method, setSmapleMethod] = useState("ddpm");
+  const [guidanceScale, setGuidanceScale] = useState(
+    default_params.guidance_scale
+  );
+  const [quality, setQuality] = useState(default_params.quality);
+  const [seed, setSeed] = useState(default_params.seed);
+  const [interpolation, setInterpolation] = useState(
+    default_params.interpolation
+  );
+  const [resolution, setResolution] = useState(default_params.resolution);
+  const [fps, setFps] = useState(default_params.video_fps);
+  const [sampleMethod, setSmapleMethod] = useState(
+    default_params.sample_method
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(prompt);
+    const parameters = {
+      width,
+      height,
+      prompt,
+      quality,
+      video_fps: fps,
+      interpolation,
+      sample_method: sampleMethod,
+      guidance_scale: guidanceScale,
+      super_resolution: resolution,
+      num_inference_steps: numInfeSteps,
+    };
+    generateVideo(parameters);
   };
 
   return (
@@ -44,7 +64,7 @@ export default function Lavie({ model }) {
             label="sample_method"
             description="Choose a scheduler for sampling base video output."
             defaultValue="ddpm"
-            selected={sample_method}
+            selected={sampleMethod}
             dataType="string"
             arrayValue={["ddim", "eulerdiscrete", "ddpm"]}
             onChange={(e) => setSmapleMethod(e.target.selected)}
@@ -160,14 +180,60 @@ export default function Lavie({ model }) {
           </div>
           <div className="space-y-4">
             <div className="w-full" style={{ width: "auto", height: "auto" }}>
-              <video
-                src={model?.url}
-                preload="auto"
-                autoPlay
-                controls
-                loop
-                style={{ width: "auto", height: "auto" }}
-              ></video>
+              <>
+                {prediction && (
+                  <>
+                    {prediction.status == "succeeded" && (
+                      <>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpen(true)}
+                            className="image-wrapper rounded-lg hover:opacity-75"
+                          >
+                            <video
+                              className={`rounded-xl aspect-square w-auto h-auto`}
+                              controls
+                            >
+                              <source
+                                src={prediction.output}
+                                type="video/mp4"
+                              ></source>
+                            </video>
+                          </button>
+                        </div>
+                        {/* <SaveImage
+                          open={open}
+                          setOpen={setOpen}
+                          prediction={prediction}
+                          url={prediction.output}
+                        /> */}
+                      </>
+                    )}
+
+                    {!prediction.output && prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <span className="mx-12">{prediction.error}</span>
+                      </div>
+                    )}
+
+                    {!prediction.output && !prediction.error && (
+                      <div className="border border-gray-300 py-3 text-sm opacity-50 flex items-center justify-center aspect-square rounded-lg">
+                        <Counter />
+                      </div>
+                    )}
+                  </>
+                )}
+                {!prediction && (
+                  <video
+                    src={model.url}
+                    preload="auto"
+                    autoPlay
+                    controls
+                    loop
+                    style={{ width: "auto", height: "auto" }}
+                  />
+                )}
+              </>
             </div>
           </div>
         </div>
