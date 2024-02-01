@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   const input = {
-    prompt: "A blonde girl in jeans", //req.body.prompt,
+    prompt: req.body.prompt,
     image: req.body.image,
 
     // HED is slightly different

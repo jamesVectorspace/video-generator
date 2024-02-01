@@ -37,7 +37,7 @@ export default function KandinSky({ model, generateVideo, prediction }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const prompt = {
+    const parameters = {
       animation_prompts: animationPrompts,
       animations,
       prompt_durations: promptsDurations,
@@ -49,7 +49,7 @@ export default function KandinSky({ model, generateVideo, prediction }) {
       steps,
       scheduler,
     };
-    generateVideo(prompt);
+    generateVideo(parameters);
   };
 
   const resetHandler = () => {

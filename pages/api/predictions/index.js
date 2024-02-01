@@ -21,8 +21,8 @@ export default async function handler(req, res) {
 
   const body = JSON.stringify({
     input: {
-      prompt: req.body.prompt,
-      ...modelObject.default_params,
+      ...req.body.parameters,
+      // ...modelObject.default_params,
     },
     version: modelObject.version,
   });
