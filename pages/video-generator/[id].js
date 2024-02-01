@@ -215,10 +215,22 @@ const VideoGenerator = () => {
         );
         break;
       case 6:
-        res = <StableDiffusion model={AiModels[id - 1]} />;
+        res = (
+          <StableDiffusion
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
         break;
       case 7:
-        res = <DiffusionAnimation model={AiModels[id - 1]} />;
+        res = (
+          <DiffusionAnimation
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
         break;
       case 8:
         res = (
