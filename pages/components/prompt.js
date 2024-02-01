@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 const Prompt = (props) => {
   const { value } = props;
@@ -23,7 +23,7 @@ const Prompt = (props) => {
                 >
                   <path d="M208,56V88a8,8,0,0,1-16,0V64H136V192h24a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h24V64H64V88a8,8,0,0,1-16,0V56a8,8,0,0,1,8-8H200A8,8,0,0,1,208,56Z"></path>
                 </svg>
-                prompt
+                {props.label}
               </div>
             </label>
             <span className="text-r8-red-10">*</span>
@@ -56,9 +56,7 @@ const Prompt = (props) => {
         />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="text-gray-500 dark:text-gray-400">
-          Describe the input image.
-        </p>
+        <p className="text-gray-500 dark:text-gray-400">{props.description}</p>
       </div>
     </div>
   );

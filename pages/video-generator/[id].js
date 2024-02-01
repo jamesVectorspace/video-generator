@@ -13,57 +13,42 @@ import InfiniteZoom from "../components/formContent/infiniteZoom";
 const VideoGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [curModel, setCurModel] = useState();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    try {
-      setCurModel(AiModels[id - 1]);
-    } catch (e) {
-      console.log("invalid model", e);
-    }
-    setLoading(false);
-  }, [id]);
 
   const formContent = useMemo(() => {
     let res = <></>;
-    if (!loading) {
-      switch (Number(id)) {
-        case 1:
-          res = <KandinSky model={curModel} />;
-          break;
-        case 2:
-          res = <Tokenflow model={curModel} />;
-          break;
-        case 3:
-          res = <Iv2gen model={curModel} />;
-          break;
-        case 4:
-          res = <Videocrafter model={curModel} />;
-          break;
-        case 5:
-          res = <Lavie model={curModel} />;
-          break;
-        case 6:
-          res = <StableDiffusion model={curModel} />;
-          break;
-        case 7:
-          res = <DiffusionAnimation model={curModel} />;
-          break;
-        case 8:
-          res = <InfiniteZoom model={curModel} />;
-          break;
-        default:
-          break;
-      }
+    switch (Number(id)) {
+      case 1:
+        res = <KandinSky model={AiModels[id - 1]} />;
+        break;
+      case 2:
+        res = <Tokenflow model={AiModels[id - 1]} />;
+        break;
+      case 3:
+        res = <Iv2gen model={AiModels[id - 1]} />;
+        break;
+      case 4:
+        res = <Videocrafter model={AiModels[id - 1]} />;
+        break;
+      case 5:
+        res = <Lavie model={AiModels[id - 1]} />;
+        break;
+      case 6:
+        res = <StableDiffusion model={AiModels[id - 1]} />;
+        break;
+      case 7:
+        res = <DiffusionAnimation model={AiModels[id - 1]} />;
+        break;
+      case 8:
+        res = <InfiniteZoom model={AiModels[id - 1]} />;
+        break;
+      default:
+        res = <></>;
+        break;
     }
     return res;
-  }, [id, curModel, loading]);
+  }, [id]);
 
-  return (
-    <div className="mt-2 py-5 px-20">{!loading && <>{formContent}</>}</div>
-  );
+  return <div className="mt-2 py-5 px-20">{formContent}</div>;
 };
 
 export default VideoGenerator;
