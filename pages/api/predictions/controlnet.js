@@ -9,17 +9,18 @@ export default async function handler(req, res) {
     );
   }
 
-  const input = {
-    prompt: req.body.prompt,
-    image: req.body.image,
+  const modelName = req.body.model;
+  const modelObject = AiModels.filter((model) => model.name === modelName)[0];
 
-    // HED is slightly different
-    input_image: req.body.image,
-  };
+  if (!modelObject) {
+    throw new Error(`Model ${modelName} not found`);
+  }
 
   const body = JSON.stringify({
-    input,
-    version: req.body.version,
+    input: {
+      ...req.body.parameters,
+    },
+    version: modelObject.version,
   });
 
   const headers = {

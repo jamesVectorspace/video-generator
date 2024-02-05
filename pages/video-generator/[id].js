@@ -85,86 +85,6 @@ const VideoGenerator = () => {
       });
   };
 
-  // with image
-  async function postPredictionWithImage(prompt, image, model, submissionId) {
-    return fetch("/api/predictions/controlnet", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        image: image,
-        version: model.version,
-        source: model.source,
-        model: model.name,
-        submission_id: submissionId,
-      }),
-    });
-  }
-  async function createReplicatePredictionWithImage(
-    prompt,
-    image,
-    model,
-    submissionId
-  ) {
-    const response = await postPredictionWithImage(
-      prompt,
-      image,
-      model,
-      submissionId
-    );
-
-    let prediction = await response.json();
-    if (response.status !== 201) {
-      throw new Error(prediction.detail);
-    }
-
-    while (
-      prediction.status !== "succeeded" &&
-      prediction.status !== "failed"
-    ) {
-      await sleep(500);
-      const response = await fetch("/api/predictions/" + prediction.id);
-      prediction = await response.json();
-      if (response.status !== 200) {
-        throw new Error(prediction.detail);
-      }
-    }
-
-    prediction.model = model.name;
-    prediction.source = model.source;
-
-    return prediction;
-  }
-
-  const generateVideoWithImage = async (prompt, newImageURL) => {
-    setLoading(true);
-    const submissionId = uuidv4();
-    const model = AiModels[id - 1];
-
-    let promise = createReplicatePredictionWithImage(
-      prompt,
-      newImageURL,
-      model,
-      submissionId
-    );
-    promise.model = model.name;
-    promise.source = model.source;
-    promise.version = model.version;
-    setPrediction(promise);
-
-    promise
-      .then((result) => {
-        setPrediction(result);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
-  };
-
   const formContent = useMemo(() => {
     let res = <></>;
     switch (Number(id)) {
@@ -181,7 +101,7 @@ const VideoGenerator = () => {
         res = (
           <Tokenflow
             model={AiModels[id - 1]}
-            generateVideo={generateVideoWithImage}
+            generateVideo={generateVideo}
             prediction={prediction}
           />
         );
@@ -190,7 +110,7 @@ const VideoGenerator = () => {
         res = (
           <Iv2gen
             model={AiModels[id - 1]}
-            generateVideo={generateVideoWithImage}
+            generateVideo={generateVideo}
             prediction={prediction}
           />
         );

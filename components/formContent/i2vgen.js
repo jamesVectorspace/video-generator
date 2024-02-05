@@ -5,7 +5,6 @@ import Prompt from "../prompt";
 import SimpleInputNum from "../simpleInputNum";
 import { supabaseClient, supabaseClientUrl } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
-import SaveImage from "../save-image";
 import Counter from "../counter";
 
 export default function Iv2gen({ model, generateVideo, prediction }) {
@@ -78,20 +77,19 @@ export default function Iv2gen({ model, generateVideo, prediction }) {
         newImageURL = imageURL;
       }
 
-      // const parameters = {
-      //   prompt,
-      //   max_frames: maxFrames,
-      //   guidance_scale: guidanceScale,
-      //   num_inference_steps: numInfeSteps,
-      // };
+      const parameters = {
+        prompt,
+        image: newImageURL,
+        max_frames: maxFrames,
+        guidance_scale: guidanceScale,
+        num_inference_steps: numInfeSteps,
+      };
       // console.log(`great, setting url to ${newImageURL}`);
       // console.log(`parameters`, parameters);
 
-      generateVideo(prompt, newImageURL);
+      generateVideo(parameters);
     }
   };
-
-  console.log("imageURL", imageURL);
 
   return (
     <div className="flex flex-col md:flex-row">
