@@ -10,6 +10,7 @@ import StableDiffusion from "../../components/formContent/stablediffusion";
 import DiffusionAnimation from "../../components/formContent/diffusionAnimation";
 import InfiniteZoom from "../../components/formContent/infiniteZoom";
 import { v4 as uuidv4 } from "uuid";
+import Lightning from "@/components/formContent/lightning";
 
 const VideoGenerator = () => {
   const router = useRouter();
@@ -154,6 +155,15 @@ const VideoGenerator = () => {
       case 8:
         res = (
           <InfiniteZoom
+            model={AiModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
+        break;
+      case 9:
+        res = (
+          <Lightning
             model={AiModels[id - 1]}
             generateVideo={generateVideo}
             prediction={prediction}

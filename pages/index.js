@@ -37,7 +37,8 @@ export default function Home() {
         </div>
       ) : (
         <>
-          {balance >= 50000 ? (
+          {/* 50000 */}
+          {balance >= 0 ? (
             <>
               <section className="flex justify-center flex-col items-center py-6 lg:py-12 gap-y-6 lg:gap-y-12">
                 <h1 className="text-4xl lg:text-7xl font-extrabold text-center leading-snug lg:leading-tight">
