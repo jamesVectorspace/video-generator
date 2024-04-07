@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { VideoModels } from "@/lib/models";
+import AiModels, { ImageModels } from "@/lib/models";
 import KandinSky from "../../components/formContent/kandinsky";
 import Tokenflow from "../../components/formContent/tokenflow";
 import Iv2gen from "../../components/formContent/i2vgen";
@@ -11,8 +11,9 @@ import DiffusionAnimation from "../../components/formContent/diffusionAnimation"
 import InfiniteZoom from "../../components/formContent/infiniteZoom";
 import { v4 as uuidv4 } from "uuid";
 import Lightning from "@/components/formContent/lightning";
+import Cinematic from "@/components/imageForm/cinematic";
 
-const VideoGenerator = () => {
+const ImageGenerator = () => {
   const router = useRouter();
   const { id } = router.query;
   const [error, setError] = useState(null);
@@ -62,11 +63,11 @@ const VideoGenerator = () => {
     return prediction;
   }
 
-  const generateVideo = (prompt) => {
+  const generateImage = (prompt) => {
     setLoading(true);
     setError(null);
 
-    const model = VideoModels[id - 1];
+    const model = ImageModels[id - 1];
     const submissionId = uuidv4();
     let promise = createReplicatePrediction(prompt, model, submissionId);
     promise.model = model.name;
@@ -91,81 +92,9 @@ const VideoGenerator = () => {
     switch (Number(id)) {
       case 1:
         res = (
-          <KandinSky
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 2:
-        res = (
-          <Tokenflow
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 3:
-        res = (
-          <Iv2gen
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 4:
-        res = (
-          <Videocrafter
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 5:
-        res = (
-          <Lavie
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 6:
-        res = (
-          <StableDiffusion
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 7:
-        res = (
-          <DiffusionAnimation
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 8:
-        res = (
-          <InfiniteZoom
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
-            prediction={prediction}
-          />
-        );
-        break;
-      case 9:
-        res = (
-          <Lightning
-            model={VideoModels[id - 1]}
-            generateVideo={generateVideo}
+          <Cinematic
+            model={ImageModels[id - 1]}
+            generateImage={generateImage}
             prediction={prediction}
           />
         );
@@ -180,4 +109,4 @@ const VideoGenerator = () => {
   return <div className="mt-2 py-5 px-20">{formContent}</div>;
 };
 
-export default VideoGenerator;
+export default ImageGenerator;

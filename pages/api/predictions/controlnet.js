@@ -1,3 +1,4 @@
+import { VideoModels } from "@/lib/models";
 import packageData from "../../../package.json";
 
 const REPLICATE_API_HOST = "https://api.replicate.com";
@@ -10,7 +11,9 @@ export default async function handler(req, res) {
   }
 
   const modelName = req.body.model;
-  const modelObject = AiModels.filter((model) => model.name === modelName)[0];
+  const modelObject = VideoModels.filter(
+    (model) => model.name === modelName
+  )[0];
 
   if (!modelObject) {
     throw new Error(`Model ${modelName} not found`);
