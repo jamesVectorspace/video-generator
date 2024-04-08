@@ -12,13 +12,9 @@ export default async function handler(req, res) {
     );
   }
 
-  const modelName = req.body.model;
-  const modelObject = VideoModels.filter(
-    (model) => model.name === modelName
-  )[0];
-
-  if (!modelObject) {
-    throw new Error(`Model ${modelName} not found`);
+  const model = req.body.model;
+  if (!model) {
+    throw new Error(`Model ${model.name} not found`);
   }
 
   const body = JSON.stringify({
@@ -26,7 +22,7 @@ export default async function handler(req, res) {
       ...req.body.parameters,
       // ...modelObject.default_params,
     },
-    version: modelObject.version,
+    version: model.version,
   });
 
   const headers = {

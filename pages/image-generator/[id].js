@@ -1,17 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import AiModels, { ImageModels } from "@/lib/models";
-import KandinSky from "../../components/formContent/kandinsky";
-import Tokenflow from "../../components/formContent/tokenflow";
-import Iv2gen from "../../components/formContent/i2vgen";
-import Videocrafter from "../../components/formContent/videocrafter";
-import Lavie from "../../components/formContent/lavie";
-import StableDiffusion from "../../components/formContent/stablediffusion";
-import DiffusionAnimation from "../../components/formContent/diffusionAnimation";
-import InfiniteZoom from "../../components/formContent/infiniteZoom";
-import { v4 as uuidv4 } from "uuid";
-import Lightning from "@/components/formContent/lightning";
+import { ImageModels } from "@/lib/models";
 import Cinematic from "@/components/imageForm/cinematic";
+import { v4 as uuidv4 } from "uuid";
 
 const ImageGenerator = () => {
   const router = useRouter();
@@ -31,9 +22,7 @@ const ImageGenerator = () => {
       },
       body: JSON.stringify({
         parameters,
-        version: model.version,
-        source: model.source,
-        model: model.name,
+        model,
         submission_id: submissionId,
       }),
     });

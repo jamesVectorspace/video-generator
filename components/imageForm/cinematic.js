@@ -29,6 +29,7 @@ export default function Cinematic({ model, generateImage, prediction }) {
       height,
       num_images: numImages,
       num_inference_steps: numInfeSteps,
+      guidance_scale: guidanceScale,
       seed,
     };
     generateImage(parameters);
@@ -156,7 +157,7 @@ export default function Cinematic({ model, generateImage, prediction }) {
                             onClick={() => setOpen(true)}
                             className="image-wrapper rounded-lg hover:opacity-75"
                           >
-                            <video
+                            {/* <video
                               className={`rounded-xl aspect-square w-auto h-auto`}
                               controls
                             >
@@ -164,7 +165,19 @@ export default function Cinematic({ model, generateImage, prediction }) {
                                 src={prediction.output}
                                 type="video/mp4"
                               ></source>
-                            </video>
+                            </video> */}
+                            {prediction.output && (
+                              <img
+                                className={`rounded-xl aspect-square max-w-full object-cover`}
+                                loading="lazy"
+                                src={
+                                  prediction.output[
+                                    prediction.output.length - 1
+                                  ]
+                                }
+                                alt="output"
+                              />
+                            )}
                           </button>
                         </div>
                         {/* <SaveImage

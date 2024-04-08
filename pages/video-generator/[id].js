@@ -30,9 +30,7 @@ const VideoGenerator = () => {
       },
       body: JSON.stringify({
         parameters,
-        version: model.version,
-        source: model.source,
-        model: model.name,
+        model,
         submission_id: submissionId,
       }),
     });
