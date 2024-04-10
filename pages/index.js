@@ -30,6 +30,13 @@ export default function Home() {
 
   return (
     <main className="px-4 lg:px-0 flex justify-center flex-col items-center min-h-dvh">
+      <div className="flex justify-center mb-4 mt-4">
+        <img
+          className="w-20 h-20"
+          src={"/assets/baseai.jpg"}
+          alt="baseai logo"
+        />
+      </div>
       {!address || address == "" ? (
         <div className="flex flex-col justify-center items-center gap-4">
           <h1 className="text-3xl lg:text-5xl font-extrabold text-center leading-snug lg:leading-tight">

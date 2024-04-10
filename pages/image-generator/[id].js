@@ -95,7 +95,18 @@ const ImageGenerator = () => {
     return res;
   }, [id, prediction]);
 
-  return <div className="mt-2 py-5 px-20">{formContent}</div>;
+  return (
+    <div className="mt-2 py-5 px-20">
+      <div className="flex justify-center mb-4">
+        <img
+          className="w-20 h-20"
+          src={"/assets/baseai.jpg"}
+          alt="baseai logo"
+        />
+      </div>
+      {formContent}
+    </div>
+  );
 };
 
 export default ImageGenerator;

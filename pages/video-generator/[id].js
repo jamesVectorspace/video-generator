@@ -11,6 +11,9 @@ import DiffusionAnimation from "../../components/formContent/diffusionAnimation"
 import InfiniteZoom from "../../components/formContent/infiniteZoom";
 import { v4 as uuidv4 } from "uuid";
 import Lightning from "@/components/formContent/lightning";
+import MinigptVideo from "@/components/formContent/minigptVideo";
+import OpenSoraPlan from "@/components/formContent/openSoraPlan";
+import BaseAiLogo from "@/assets/baseai.jpg";
 
 const VideoGenerator = () => {
   const router = useRouter();
@@ -168,6 +171,24 @@ const VideoGenerator = () => {
           />
         );
         break;
+      case 10:
+        res = (
+          <OpenSoraPlan
+            model={VideoModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
+        break;
+      case 11:
+        res = (
+          <MinigptVideo
+            model={VideoModels[id - 1]}
+            generateVideo={generateVideo}
+            prediction={prediction}
+          />
+        );
+        break;
       default:
         res = <></>;
         break;
@@ -175,7 +196,18 @@ const VideoGenerator = () => {
     return res;
   }, [id, prediction]);
 
-  return <div className="mt-2 py-5 px-20">{formContent}</div>;
+  return (
+    <div className="mt-2 py-5 px-20">
+      <div className="flex justify-center mb-4">
+        <img
+          className="w-20 h-20"
+          src={"/assets/baseai.jpg"}
+          alt="baseai logo"
+        />
+      </div>
+      {formContent}
+    </div>
+  );
 };
 
 export default VideoGenerator;
