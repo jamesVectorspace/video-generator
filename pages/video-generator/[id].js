@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import Lightning from "@/components/formContent/lightning";
 import MinigptVideo from "@/components/formContent/minigptVideo";
 import OpenSoraPlan from "@/components/formContent/openSoraPlan";
-import BaseAiLogo from "@/assets/baseai.jpg";
+import BaseAiLogo from "@/assets/baseai.png";
 
 const VideoGenerator = () => {
   const router = useRouter();
@@ -201,7 +201,7 @@ const VideoGenerator = () => {
       <div className="flex justify-center mb-4">
         <img
           className="w-20 h-20"
-          src={"/assets/baseai.jpg"}
+          src={"/assets/baseai.png"}
           alt="baseai logo"
         />
       </div>

@@ -33,7 +33,7 @@ export default function Home() {
       <div className="flex justify-center mb-4 mt-4">
         <img
           className="w-20 h-20"
-          src={"/assets/baseai.jpg"}
+          src={"/assets/baseai.png"}
           alt="baseai logo"
         />
       </div>
