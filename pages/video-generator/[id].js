@@ -13,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import Lightning from "@/components/formContent/lightning";
 import MinigptVideo from "@/components/formContent/minigptVideo";
 import OpenSoraPlan from "@/components/formContent/openSoraPlan";
-import BaseAiLogo from "@/assets/baseai.png";
 
 const VideoGenerator = () => {
   const router = useRouter();
