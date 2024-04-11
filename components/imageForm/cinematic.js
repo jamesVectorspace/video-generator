@@ -52,7 +52,7 @@ export default function Cinematic({ model, generateImage, prediction }) {
 
           <Prompt
             onChange={(e) => setNegativePrompt(e.target.value)}
-            value={prompt}
+            value={negativePrompt}
             description="Default: text, watermark, blur, deformed, noised"
           />
           <SimpleInputNum
